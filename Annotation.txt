@@ -1,0 +1,6 @@
+@Data: @ToString, @EqualsAndHashCode, @Getter, @Setter, @RequiredArgsConstructor!
+@Builder:
+@AllArgsConstructor: All argument constructor
+@FieldDefaults(level = AccessLevel.PRIVATE): All field are private default
+@JsonInclude(JsonInclude.Include.NON_NULL):  Not display data field with NULL value
+@RequiredArgsConstructor
