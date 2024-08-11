@@ -1,11 +1,13 @@
 package com.ketealare.identityService.dto.request;
 
-import com.ketealare.identityService.validator.DobConstraint;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Size;
+
+import com.ketealare.identityService.validator.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @Builder
@@ -18,6 +20,7 @@ public class UserCreationRequest {
 
     @Size(min = 8, message = "PASSWORD_INVALID")
     String password;
+
     String firstName;
     String lastName;
 

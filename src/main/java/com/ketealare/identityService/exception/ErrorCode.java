@@ -1,11 +1,12 @@
 package com.ketealare.identityService.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,7 +21,6 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated!", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You dont have permission!", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min} years old", HttpStatus.FORBIDDEN),
-
     ;
 
     int code;

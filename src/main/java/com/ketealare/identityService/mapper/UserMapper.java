@@ -1,12 +1,13 @@
 package com.ketealare.identityService.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
 import com.ketealare.identityService.dto.request.UserCreationRequest;
 import com.ketealare.identityService.dto.request.UserUpdateRequest;
 import com.ketealare.identityService.dto.response.UserResponse;
 import com.ketealare.identityService.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

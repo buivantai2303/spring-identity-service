@@ -1,7 +1,10 @@
 package com.ketealare.identityService.exception;
 
-import com.ketealare.identityService.dto.response.ApiResponse;
+import java.util.Map;
+import java.util.Objects;
+
 import jakarta.validation.ConstraintViolation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Map;
-import java.util.Objects;
+import com.ketealare.identityService.dto.response.ApiResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,7 +33,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-
     // App Exception
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
@@ -42,25 +43,20 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity
-                .status(errorCode.getStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
-
 
     // Access Denied Exception
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
-        return ResponseEntity.status(errorCode.getStatusCode()).body(
-                ApiResponse.builder()
+        return ResponseEntity.status(errorCode.getStatusCode())
+                .body(ApiResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
-                        .build()
-        );
+                        .build());
     }
-
 
     // MethodArgumentNotValidException Exception
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
@@ -77,10 +73,8 @@ public class GlobalExceptionHandler {
         try {
             error_Code = ErrorCode.valueOf(enum_Key);
 
-            var constraintViolations = exception.getBindingResult()
-                    .getAllErrors()
-                    .getFirst()
-                    .unwrap(ConstraintViolation.class);
+            var constraintViolations =
+                    exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
 
             attributes = constraintViolations.getConstraintDescriptor().getAttributes();
 
@@ -94,8 +88,8 @@ public class GlobalExceptionHandler {
 
         apiResponse.setCode(error_Code.getCode());
         apiResponse.setMessage(
-                Objects.nonNull(attributes) ?
-                        mapAttribute(error_Code.getMessage(), attributes)
+                Objects.nonNull(attributes)
+                        ? mapAttribute(error_Code.getMessage(), attributes)
                         : error_Code.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);

@@ -1,5 +1,14 @@
 package com.ketealare.identityService.service;
 
+import java.util.HashSet;
+import java.util.List;
+
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.ketealare.identityService.constant.PredefinedRole;
 import com.ketealare.identityService.dto.request.UserCreationRequest;
 import com.ketealare.identityService.dto.request.UserUpdateRequest;
@@ -11,18 +20,11 @@ import com.ketealare.identityService.exception.ErrorCode;
 import com.ketealare.identityService.mapper.UserMapper;
 import com.ketealare.identityService.repository.RoleRepository;
 import com.ketealare.identityService.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -56,15 +58,13 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByUsername(name).orElseThrow(
-                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found!"));
         userMapper.updateUser(user, request);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -82,12 +82,11 @@ public class UserService {
 
     @PostAuthorize("returnObject.username == authentication.name || hasRole('ADMIN')")
     public UserResponse getUser(String id) {
-        return userMapper.toUserResponse(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found!")));
+        return userMapper.toUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found!")));
     }
 
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
-
 }

@@ -8,6 +8,7 @@ spring:
     username: root
     password: Taidien1
     url: "jdbc:mysql://localhost:3306/identity_service"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
 
   # Auto update database (Table), not recommend
   jpa:

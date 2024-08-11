@@ -1,15 +1,17 @@
 package com.ketealare.identityService.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.ketealare.identityService.dto.request.RoleRequest;
 import com.ketealare.identityService.dto.response.ApiResponse;
 import com.ketealare.identityService.dto.response.RoleResponse;
 import com.ketealare.identityService.service.RoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/roles")

@@ -1,20 +1,26 @@
 package com.ketealare.identityService.configuration;
 
-import com.ketealare.identityService.constant.PredefinedRole;
-import com.ketealare.identityService.entity.Role;
-import com.ketealare.identityService.entity.User;
-import com.ketealare.identityService.repository.RoleRepository;
-import com.ketealare.identityService.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
+import com.ketealare.identityService.constant.PredefinedRole;
+import com.ketealare.identityService.entity.Permission;
+import com.ketealare.identityService.entity.Role;
+import com.ketealare.identityService.entity.User;
+import com.ketealare.identityService.repository.PermissionRepository;
+import com.ketealare.identityService.repository.RoleRepository;
+import com.ketealare.identityService.repository.UserRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -25,14 +31,33 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
-    @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
-        return args -> {
+    @NonFinal
+    static final String ADMIN_USER_NAME = "admin";
 
-            if (userRepository.findByUsername("admin").isEmpty()){
+    @NonFinal
+    static final String ADMIN_PASSWORD = "admin";
+
+    @Bean
+    @ConditionalOnProperty(
+            prefix = "spring",
+            value = "datasource.driverClassName",
+            havingValue = "com.mysql.cj.jdbc.Driver")
+    ApplicationRunner applicationRunner(UserRepository userRepository, PermissionRepository permissionRepository) {
+        log.info("Initializing application...");
+        return args -> {
+            if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
+
+                Permission permissionAdmin = permissionRepository.save(Permission.builder()
+                        .name("UPDATE_DATA")
+                        .description("Update users data")
+                        .build());
+
+                var permissions = new HashSet<Permission>();
+                permissions.add(permissionAdmin);
 
                 Role adminRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.ADMIN_ROLE)
+                        .permissions(permissions)
                         .description("Admin role")
                         .build());
 
